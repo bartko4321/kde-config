@@ -1,0 +1,55 @@
+{
+    "$fdo_created": "1775142292",
+    "$fdo_modified": "1775510498",
+    "Brave Keys/Brave Safe Storage": {
+        "$fdo_created": "1775142594",
+        "$fdo_mime_type": "text/plain",
+        "$fdo_modified": "1775142594",
+        "attributes": {
+            "server": "Brave Keys",
+            "type": "plaintext",
+            "user": "Brave Safe Storage",
+            "xdg:schema": "org.qt.keychain"
+        }
+    },
+    "Chrome Keys/Chrome Safe Storage": {
+        "$fdo_created": "1775510498",
+        "$fdo_mime_type": "text/plain",
+        "$fdo_modified": "1775510498",
+        "attributes": {
+            "server": "Chrome Keys",
+            "type": "plaintext",
+            "user": "Chrome Safe Storage",
+            "xdg:schema": "org.qt.keychain"
+        }
+    },
+    "Chromium Keys/Chromium Safe Storage": {
+        "$fdo_created": "1775509970",
+        "$fdo_mime_type": "text/plain",
+        "$fdo_modified": "1775509970",
+        "attributes": {
+            "server": "Chromium Keys",
+            "type": "plaintext",
+            "user": "Chromium Safe Storage",
+            "xdg:schema": "org.qt.keychain"
+        }
+    },
+    "xdg-desktop-portal/com.google.Chrome": {
+        "$fdo_created": "1775145680",
+        "$fdo_modified": "1775145680",
+        "attributes": {
+            "server": "xdg-desktop-portal",
+            "type": "binary",
+            "user": "com.google.Chrome"
+        }
+    },
+    "xdg-desktop-portal/org.chromium.Chromium": {
+        "$fdo_created": "1775145680",
+        "$fdo_modified": "1775145680",
+        "attributes": {
+            "server": "xdg-desktop-portal",
+            "type": "binary",
+            "user": "org.chromium.Chromium"
+        }
+    }
+}

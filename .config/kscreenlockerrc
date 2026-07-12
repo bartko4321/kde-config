@@ -1,0 +1,7 @@
+[Daemon]
+LockGrace=300
+Timeout=30
+
+[Greeter][Wallpaper][org.kde.image][General]
+Image=file:///home/bartek/.local/share/wallpapers/Aritim-Dark-Wallpaper-V2-Blurred-3840x5376.jpg
+PreviewImage=file:///home/bartek/.local/share/wallpapers/Aritim-Dark-Wallpaper-V2-Blurred-3840x5376.jpg
