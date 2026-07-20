@@ -42,6 +42,9 @@
    <Filename>qv4l2.desktop</Filename>
    <Filename>qvidcap.desktop</Filename>
   </Exclude>
+  <Include>
+   <Filename>audacity.desktop</Filename>
+  </Include>
   <Layout>
    <Merge type="files"/>
    <Filename>audacity.desktop</Filename>
@@ -160,23 +163,27 @@
   <Name>Games</Name>
   <Layout>
    <Merge type="files"/>
-   <Filename>faugus-launcher.desktop</Filename>
+   <Filename>io.github.Faugus.faugus-launcher.desktop</Filename>
    <Filename>io.github.benjamimgois.goverlay.desktop</Filename>
    <Merge type="menus"/>
-   <Menuname>Kidsgames</Menuname>
    <Menuname>Card</Menuname>
    <Menuname>Logic</Menuname>
    <Menuname>Board</Menuname>
    <Menuname>TacticStrategy</Menuname>
    <Menuname>Arcade</Menuname>
   </Layout>
+  <Menu>
+   <Name>Kidsgames</Name>
+   <Deleted/>
+  </Menu>
  </Menu>
  <Menu>
   <Name>Internet</Name>
   <Layout>
    <Merge type="files"/>
-   <Filename>brave-browser.desktop</Filename>
+   <Filename>brave-origin.desktop</Filename>
    <Filename>discord.desktop</Filename>
+   <Filename>firefox-developer-edition.desktop</Filename>
    <Filename>google-chrome.desktop</Filename>
    <Merge type="menus"/>
    <Menuname>Terminal</Menuname>
