@@ -27,7 +27,7 @@ immutability=1
 plugin=org.kde.plasma.kicker
 
 [Containments][25][Applets][28][Configuration]
-popupHeight=348
+popupHeight=282
 popupWidth=312
 
 [Containments][25][Applets][28][Configuration][ConfigDialog]
@@ -247,15 +247,15 @@ immutability=1
 plugin=org.kde.plasma.icontasks
 
 [Containments][53][Applets][54][Configuration][General]
-launchers=preferred://filemanager,applications:
+launchers=preferred://filemanager,applications:google-chrome.desktop,applications:org.mozilla.Thunderbird.desktop,applications:firefox-developer-edition.desktop,applications:org.kde.kate.desktop,applications:org.kde.gwenview.desktop,applications:org.kde.okular.desktop,applications:org.telegram.desktop.desktop,applications:discord.desktop,applications:qmmp.desktop,applications:io.github.Faugus.faugus-launcher.desktop,applications:org.kde.spectacle.desktop
 
 [Containments][53][General]
 AppletOrder=54
 
-[Containments][57]
+[Containments][58]
 ItemGeometries-1920x1080=
 ItemGeometriesHorizontal=
-activityId=238eb65c-8438-422b-b3e1-9ecaca62a4fb
+activityId=1a01f1c5-a3ea-4b1a-9185-51dd11fb7f9f
 formfactor=0
 immutability=1
 lastScreen=0
@@ -263,19 +263,16 @@ location=0
 plugin=org.kde.plasma.folder
 wallpaperplugin=org.kde.potd
 
-[Containments][57][ConfigDialog]
+[Containments][58][ConfigDialog]
 DialogHeight=630
 DialogWidth=810
 
-[Containments][57][General]
-changedPositions={"desktop:/config.ini":["1920x1080","3","0"],"desktop:/gwenviewrc":["1920x1080","1","0"]}
-lastResolution=1920x1080
-positions={"1920x1080":["1","17","desktop:/config.ini","3","0","desktop:/gwenviewrc","1","0","desktop:/applications-kmenuedit.menu","0","0"]}
-sortMode=-1
+[Containments][58][Wallpaper][org.kde.image][General]
+Image=/home/bartek/Pobrane/tapeciarnia.pl-236070_morze_plaza_niebo_chmury_deszcz_klif_pioruny_burza.jpg
 
-[Containments][57][Wallpaper][org.kde.potd][General]
+[Containments][58][Wallpaper][org.kde.potd][General]
 Provider=bing
 
 [ScreenMapping]
 itemsOnDisabledScreens=
-screenMapping=file:///home/bartek/Pulpit/Skrót do programu.desktop,0,c9ba6224-b240-4408-a3a5-830607614b94,desktop:/token.txt,0,aa998e0b-ae2d-41fa-acbb-e2929b26924a
+screenMapping=desktop:/token.txt,0,aa998e0b-ae2d-41fa-acbb-e2929b26924a,file:///home/bartek/Pulpit/Skrót do programu.desktop,0,1a01f1c5-a3ea-4b1a-9185-51dd11fb7f9f,desktop:/Nowy katalog,0,238eb65c-8438-422b-b3e1-9ecaca62a4fb,file:///home/bartek/Pulpit/Skrót do programu.desktop,0,c9ba6224-b240-4408-a3a5-830607614b94,desktop:/Plik tekstowy.txt,0,238eb65c-8438-422b-b3e1-9ecaca62a4fb
