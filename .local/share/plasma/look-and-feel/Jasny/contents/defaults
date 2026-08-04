@@ -25,3 +25,6 @@ name=MacSonoma-Light
 
 [ksplashrc][KSplash]
 Theme=Vortex-Splash-6
+
+[Wallpaper]
+Image=/usr/share/wallpapers/Next/contents/images/wallpaper.jpg
