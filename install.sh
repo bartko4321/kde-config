@@ -85,24 +85,25 @@ if [[ -f "$SCRIPT_DIR/plasmalogin.conf" ]]; then
     sudo chmod 644 /etc/plasmalogin.conf
 fi
 
-# Podmiana domyślnych tapet "Next"
-log_info "Podmiana tapet w motywie Next..."
-TARGET_DIR="/usr/share/wallpapers/Next"
+log_info "Zmiana Tapety..."
+TARGET_DIR="/usr/share/wallpapers/Next/contents/images"
 
-for res in 1920x1080 2560x1440 5120x2880; do
-    if [[ -f "$SCRIPT_DIR/$res.png" ]]; then
-        sudo mkdir -p "$TARGET_DIR/contents/images"
-        sudo cp -f "$SCRIPT_DIR/$res.png" "$TARGET_DIR/contents/images/$res.png"
-        sudo chmod 644 "$TARGET_DIR/contents/images/$res.png"
-    else
-        log_warn "Brak pliku $res.png w katalogu ze skryptem - pomijam."
-    fi
-done
+# Upewnienie się, że katalog docelowy istnieje
+sudo mkdir -p "$TARGET_DIR"
 
-if [[ -f "$SCRIPT_DIR/5120x2880.png" ]]; then
-    sudo mkdir -p "$TARGET_DIR/contents/images_dark"
-    sudo cp -f "$SCRIPT_DIR/5120x2880.png" "$TARGET_DIR/contents/images_dark/5120x2880.png"
-    sudo chmod 644 "$TARGET_DIR/contents/images_dark/5120x2880.png"
+# Kopiowanie tapet do systemowego katalogu
+if [[ -f "$SCRIPT_DIR/wallpaper.jpg" ]]; then
+    sudo cp -f "$SCRIPT_DIR/wallpaper.jpg" "$TARGET_DIR/"
+    log_ok "Skopiowano wallpaper.jpg"
+else
+    log_warn "Brak pliku wallpaper.jpg w katalogu skryptu."
+fi
+
+if [[ -f "$SCRIPT_DIR/wallpaper2.jpg" ]]; then
+    sudo cp -f "$SCRIPT_DIR/wallpaper2.jpg" "$TARGET_DIR/"
+    log_ok "Skopiowano wallpaper2.jpg"
+else
+    log_warn "Brak pliku wallpaper2.jpg w katalogu skryptu."
 fi
 
 # Konfiguracja BleachBit dla roota
