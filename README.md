@@ -18,26 +18,6 @@ A script that automates the personalization and visual configuration of the **KD
 
 ---
 
-## 📂 Required Directory Structure
-
-Before running the script, make sure the following image and configuration files are present in the same directory:
-
-```text
-.
-├── install.sh             # This script
-├── piwo.png               # Your system avatar
-├── start.png              # Login screen wallpaper
-├── plasmalogin.conf       # Login screen configuration
-├── 1920x1080.png          # Full HD wallpaper
-├── 2560x1440.png          # 2K wallpaper
-├── 5120x2880.png          # 4K/5K wallpaper (light and dark)
-├── .config/               # Your KDE configuration files
-├── .local/                # Local app data and themes
-└── .icons/                # Your icons and cursors
-```
-
----
-
 ## 🛠️ How to Use
 
 ### 1. Clone the repository or download the files
