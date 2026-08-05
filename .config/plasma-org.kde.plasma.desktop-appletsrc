@@ -247,7 +247,7 @@ immutability=1
 plugin=org.kde.plasma.icontasks
 
 [Containments][53][Applets][54][Configuration][General]
-launchers=preferred://filemanager,applications:google-chrome.desktop,applications:org.mozilla.Thunderbird.desktop,applications:firefox-developer-edition.desktop,applications:org.kde.kate.desktop,applications:org.kde.gwenview.desktop,applications:org.kde.okular.desktop,applications:org.telegram.desktop.desktop,applications:discord.desktop,applications:qmmp.desktop,applications:io.github.Faugus.faugus-launcher.desktop,applications:org.kde.spectacle.desktop
+launchers=preferred://filemanager,applications:google-chrome.desktop
 
 [Containments][53][General]
 AppletOrder=54
