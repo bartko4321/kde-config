@@ -99,15 +99,6 @@ else
     log_warn "Brak pliku wallpaper.jpg w katalogu skryptu."
 fi
 
-# Konfiguracja BleachBit dla roota
-if [ -d "$SCRIPT_DIR/bleachbit" ]; then
-    sudo mkdir -p /root/.config/bleachbit
-    sudo cp -af "$SCRIPT_DIR/bleachbit/." /root/.config/bleachbit/
-    log_ok "Skopiowano konfigurację BleachBit."
-else
-    log_warn "Folder $SCRIPT_DIR/bleachbit nie istnieje — pomijam."
-fi
-
 # ==========================================================
 # 3. KONFIGURACJA WIZUALNA (KONTO UŻYTKOWNIKA)
 # ==========================================================
