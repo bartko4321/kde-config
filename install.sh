@@ -41,7 +41,147 @@ sudo -v
 echo "$CURRENT_USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/99-temp-installer > /dev/null
 
 # ==========================================================
-# 2. KONFIGURACJA SYSTEMOWA (SUDO)
+# 2. WYKRYWANIE DYSTRYBUCJI I INSTALACJA PAKIETÓW
+# ==========================================================
+
+# Lista pakietów w postaci "kanonicznej" (nazwy jak w Arch/Debian).
+# Realna nazwa pakietu dla danej dystrybucji jest ustalana przez
+# resolve_package_name() poniżej.
+PACKAGES=(
+    plasma-firewall
+    plasma-nm
+    plasma-pa
+    kscreen
+    bluedevil
+    kde-gtk-config
+    kinfocenter
+    kio-admin
+    kdeplasma-addons
+    aspell-pl
+    kaccounts-providers
+    dolphin
+    konsole
+    dolphin-plugins
+    spectacle
+    gwenview
+    okular
+    ark
+    kate
+)
+
+# Mapowanie nazw pakietów, które różnią się między dystrybucjami.
+# Klucz: "<rodzina>:<nazwa_kanoniczna>" -> realna nazwa pakietu.
+declare -A PACKAGE_NAME_OVERRIDES=(
+    [fedora:aspell-pl]="hunspell-pl"
+    [opensuse:aspell-pl]="hunspell-pl"
+    [opensuse:kio-admin]="kio_admin"
+)
+
+resolve_package_name() {
+    local canonical="$1"
+    local key="${DISTRO_FAMILY}:${canonical}"
+    if [[ -n "${PACKAGE_NAME_OVERRIDES[$key]:-}" ]]; then
+        echo "${PACKAGE_NAME_OVERRIDES[$key]}"
+    else
+        echo "$canonical"
+    fi
+}
+
+detect_distro() {
+    if [[ ! -f /etc/os-release ]]; then
+        log_err "Nie można wykryć dystrybucji (brak /etc/os-release)."
+        exit 1
+    fi
+
+    # shellcheck source=/dev/null
+    source /etc/os-release
+    local id="${ID:-}"
+    local id_like="${ID_LIKE:-}"
+
+    case "$id" in
+        arch|archlinux|endeavouros|manjaro)
+            DISTRO_FAMILY="arch" ;;
+        fedora)
+            DISTRO_FAMILY="fedora" ;;
+        opensuse*|sles)
+            DISTRO_FAMILY="opensuse" ;;
+        debian|ubuntu|kubuntu|linuxmint|pop|neon|zorin)
+            DISTRO_FAMILY="debian" ;;
+        *)
+            case "$id_like" in
+                *arch*)    DISTRO_FAMILY="arch" ;;
+                *fedora*)  DISTRO_FAMILY="fedora" ;;
+                *suse*)    DISTRO_FAMILY="opensuse" ;;
+                *debian*|*ubuntu*) DISTRO_FAMILY="debian" ;;
+                *)
+                    log_err "Nierozpoznana dystrybucja: ID='$id' ID_LIKE='$id_like'."
+                    exit 1
+                    ;;
+            esac
+            ;;
+    esac
+
+    log_ok "Wykryto dystrybucję: ${PRETTY_NAME:-$id} (rodzina: $DISTRO_FAMILY)"
+}
+
+install_one_package() {
+    local pkg="$1"
+    case "$DISTRO_FAMILY" in
+        arch)
+            sudo pacman -S --noconfirm --needed "$pkg"
+            ;;
+        fedora)
+            sudo dnf install -y "$pkg"
+            ;;
+        debian)
+            sudo apt-get install -y "$pkg"
+            ;;
+        opensuse)
+            sudo zypper --non-interactive install --no-recommends "$pkg"
+            ;;
+    esac
+}
+
+install_packages() {
+    log_info "Instaluję wymagane pakiety KDE Plasma (${#PACKAGES[@]} szt.)..."
+
+    if [[ "$DISTRO_FAMILY" == "debian" ]]; then
+        sudo apt-get update || log_warn "Nie udało się odświeżyć listy pakietów (apt-get update)."
+    fi
+
+    local installed=()
+    local failed=()
+    local canonical real_name
+
+    for canonical in "${PACKAGES[@]}"; do
+        real_name="$(resolve_package_name "$canonical")"
+
+        # Użycie 'if' sprawia, że niezerowy kod wyjścia nie uruchamia
+        # 'set -e' ani pułapki ERR - jeden brakujący pakiet nie przerwie skryptu.
+        if install_one_package "$real_name" > /tmp/install-"$canonical".log 2>&1; then
+            installed+=("$canonical")
+        else
+            failed+=("$canonical (pakiet: $real_name)")
+            log_warn "Nie udało się zainstalować pakietu: $canonical -> $real_name (log: /tmp/install-$canonical.log)"
+        fi
+    done
+
+    log_ok "Zainstalowano pomyślnie: ${#installed[@]}/${#PACKAGES[@]} pakietów."
+
+    if [[ ${#failed[@]} -gt 0 ]]; then
+        log_warn "Poniższych pakietów nie udało się zainstalować, kontynuuję mimo to:"
+        local f
+        for f in "${failed[@]}"; do
+            log_warn "  - $f"
+        done
+    fi
+}
+
+detect_distro
+install_packages
+
+# ==========================================================
+# 3. KONFIGURACJA SYSTEMOWA (SUDO)
 # ==========================================================
 log_info "Przechodzę do konfiguracji systemowej (wymaga uprawnień)..."
 
@@ -100,7 +240,7 @@ else
 fi
 
 # ==========================================================
-# 3. KONFIGURACJA WIZUALNA (KONTO UŻYTKOWNIKA)
+# 4. KONFIGURACJA WIZUALNA (KONTO UŻYTKOWNIKA)
 # ==========================================================
 log_info "Zatrzymywanie środowiska KDE, aby nie nadpisało naszych zmian..."
 systemctl --user stop plasma-plasmashell.service 2>/dev/null || true
@@ -148,7 +288,7 @@ if command -v kbuildsycoca6 &>/dev/null; then
 fi
 
 # ==========================================================
-# 4. ZAKOŃCZENIE I SPRZĄTANIE
+# 5. ZAKOŃCZENIE I SPRZĄTANIE
 # ==========================================================
 log_info "Usuwam tymczasowe uprawnienia sudo..."
 sudo rm -f /etc/sudoers.d/99-temp-installer
