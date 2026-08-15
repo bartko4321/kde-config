@@ -27,8 +27,8 @@ immutability=1
 plugin=org.kde.plasma.kicker
 
 [Containments][25][Applets][28][Configuration]
-popupHeight=282
-popupWidth=312
+popupHeight=275
+popupWidth=252
 
 [Containments][25][Applets][28][Configuration][ConfigDialog]
 DialogHeight=630
@@ -247,32 +247,25 @@ immutability=1
 plugin=org.kde.plasma.icontasks
 
 [Containments][53][Applets][54][Configuration][General]
-launchers=preferred://filemanager,applications:google-chrome.desktop
+launchers=preferred://filemanager,applications:google-chrome.desktop,applications:org.kde.okular.desktop,applications:org.kde.gwenview.desktop,applications:org.kde.spectacle.desktop
 
 [Containments][53][General]
 AppletOrder=54
 
-[Containments][58]
-ItemGeometries-1920x1080=
+[Containments][59]
+ItemGeometries-1280x800=
 ItemGeometriesHorizontal=
-activityId=1a01f1c5-a3ea-4b1a-9185-51dd11fb7f9f
+activityId=e899b143-9f43-438b-bb31-6bd499218cdb
 formfactor=0
 immutability=1
 lastScreen=0
 location=0
 plugin=org.kde.plasma.folder
-wallpaperplugin=org.kde.potd
+wallpaperplugin=org.kde.image
 
-[Containments][58][ConfigDialog]
-DialogHeight=630
-DialogWidth=810
-
-[Containments][58][Wallpaper][org.kde.image][General]
-Image=/home/bartek/Pobrane/tapeciarnia.pl-236070_morze_plaza_niebo_chmury_deszcz_klif_pioruny_burza.jpg
-
-[Containments][58][Wallpaper][org.kde.potd][General]
-Provider=bing
+[Containments][59][Wallpaper][org.kde.image][General]
+Image=file:///home/bartek/.local/share/wallpapers/wallpaper.jpg
 
 [ScreenMapping]
 itemsOnDisabledScreens=
-screenMapping=desktop:/token.txt,0,aa998e0b-ae2d-41fa-acbb-e2929b26924a,file:///home/bartek/Pulpit/Skrót do programu.desktop,0,1a01f1c5-a3ea-4b1a-9185-51dd11fb7f9f,desktop:/Nowy katalog,0,238eb65c-8438-422b-b3e1-9ecaca62a4fb,file:///home/bartek/Pulpit/Skrót do programu.desktop,0,c9ba6224-b240-4408-a3a5-830607614b94,desktop:/Plik tekstowy.txt,0,238eb65c-8438-422b-b3e1-9ecaca62a4fb
+screenMapping=desktop:/token.txt,0,aa998e0b-ae2d-41fa-acbb-e2929b26924a,desktop:/Nowy katalog,0,238eb65c-8438-422b-b3e1-9ecaca62a4fb,file:///home/bartek/Pulpit/Skrót do programu.desktop,0,1a01f1c5-a3ea-4b1a-9185-51dd11fb7f9f,desktop:/Plik tekstowy.txt,0,238eb65c-8438-422b-b3e1-9ecaca62a4fb,file:///home/bartek/Pulpit/Skrót do programu.desktop,0,c9ba6224-b240-4408-a3a5-830607614b94
