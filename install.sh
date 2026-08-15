@@ -3,7 +3,7 @@
 # SKRYPT KONFIGURACYJNY WIZUALNYCH ASPEKTÓW KDE PLASMA
 # ==========================================================
 
-set -euo pipefail
+set -Eeuo pipefail
 
 detect_system_lang() {
     local sys_lang="${LANG:-}"
@@ -52,7 +52,7 @@ log_ok()    { local m; m="$(_pick_msg "$1" "$2")"; echo -e "${SUCCESS}✔ $m${NC
 log_err()   { local m; m="$(_pick_msg "$1" "$2")"; echo -e "${ERROR}✘ ERROR: $m${NC}"; }
 log_warn()  { local m; m="$(_pick_msg "$1" "$2")"; echo -e "${WARN}⚠ WARN: $m${NC}"; }
 
-trap 'log_err "Skrypt zakończył się błędem w linii $LINENO. Polecenie: $BASH_COMMAND" "Script failed at line $LINENO. Command: $BASH_COMMAND"' ERR
+trap 'log_err "Błąd w linii $LINENO. Polecenie: $BASH_COMMAND" "Error at line $LINENO. Command: $BASH_COMMAND"' ERR
 
 show_progress() {
     local step=$1
@@ -219,6 +219,8 @@ install_packages() {
         add_opensuse_kde_frameworks_repo
     fi
 
+    show_progress 4 $TOTAL_STEPS "$MSG_PHASE_2"
+
     local installed=()
     local failed=()
     local canonical real_name
@@ -231,6 +233,14 @@ install_packages() {
             failed+=("$canonical (pakiet: $real_name)")
         fi
     done
+
+    show_progress 5 $TOTAL_STEPS "$MSG_PHASE_2"
+
+    log_ok "Zainstalowano ${#installed[@]}/${#PACKAGES[@]} pakietów." "Installed ${#installed[@]}/${#PACKAGES[@]} packages."
+    if [[ ${#failed[@]} -gt 0 ]]; then
+        log_warn "Nie udało się zainstalować: ${failed[*]}. Logi w /tmp/install-<pakiet>.log" \
+                 "Failed to install: ${failed[*]}. Logs in /tmp/install-<package>.log"
+    fi
 }
 
 install_packages
@@ -297,9 +307,12 @@ if [[ -d "$SCRIPT_DIR/.local" ]]; then cp -af "$SCRIPT_DIR/.local/." ~/.local/; 
 if [[ -d "$SCRIPT_DIR/.icons" ]]; then cp -af "$SCRIPT_DIR/.icons/." ~/.icons/; fi
 
 if [[ "$OLD_USER_PLACEHOLDER" != "$CURRENT_USER" ]]; then
-    grep -rl --include="*.conf" --include="*.json" --include="*.ini" \
-        "/home/$OLD_USER_PLACEHOLDER" ~/.config 2>/dev/null \
-        | xargs -r sed -i "s|/home/$OLD_USER_PLACEHOLDER|/home/$CURRENT_USER|g" || true
+    for dir in ~/.config ~/.local ~/.icons; do
+        [[ -d "$dir" ]] || continue
+        grep -rl --include="*.conf" --include="*.json" --include="*.ini" \
+            "/home/$OLD_USER_PLACEHOLDER" "$dir" 2>/dev/null \
+            | xargs -r sed -i "s|/home/$OLD_USER_PLACEHOLDER|/home/$CURRENT_USER|g" || true
+    done
 fi
 
 show_progress 10 $TOTAL_STEPS "$MSG_PHASE_3"
