@@ -147,12 +147,15 @@ PACKAGES=(
     kde-gtk-config kinfocenter kio-admin kdeplasma-addons
     aspell-pl kaccounts-providers dolphin konsole
     dolphin-plugins spectacle gwenview okular ark kate
+    plymouth-kcm
 )
 
 declare -A PACKAGE_NAME_OVERRIDES=(
     [fedora:aspell-pl]="hunspell-pl"
     [opensuse:aspell-pl]="hunspell-pl"
     [opensuse:kio-admin]="kio_admin"
+    [debian:plymouth-kcm]="kde-config-plymouth"
+    [opensuse:plymouth-kcm]="plymouth-kcm6"
 )
 
 resolve_package_name() {
@@ -202,6 +205,33 @@ install_one_package() {
     esac
 }
 
+# plymouth-kcm6 nie jest częścią standardowych repozytoriów openSUSE
+# (OSS/non-OSS) — trzeba dodać repozytorium KDE:Frameworks z OBS.
+add_opensuse_kde_frameworks_repo() {
+    local repo_alias="KDE_Frameworks_plymouth"
+    local suse_target
+
+    if [[ "${NAME:-}" == *Tumbleweed* || "${PRETTY_NAME:-}" == *Tumbleweed* ]]; then
+        suse_target="openSUSE_Tumbleweed"
+    else
+        suse_target="openSUSE_Leap_${VERSION_ID:-16.0}"
+    fi
+
+    local repo_url="https://download.opensuse.org/repositories/KDE:/Frameworks/${suse_target}/"
+
+    if sudo zypper lr -u 2>/dev/null | grep -qF "$repo_url"; then
+        return 0
+    fi
+
+    log_info "Dodaję repozytorium KDE:Frameworks (wymagane dla plymouth-kcm6)..." "Adding KDE:Frameworks repository (required for plymouth-kcm6)..."
+    if sudo zypper --non-interactive addrepo --refresh --priority 90 "$repo_url" "$repo_alias"; then
+        sudo zypper --non-interactive --gpg-auto-import-keys refresh "$repo_alias" || true
+    else
+        log_warn "Nie udało się dodać repozytorium KDE:Frameworks — plymouth-kcm6 może nie zainstalować się poprawnie." \
+                 "Failed to add the KDE:Frameworks repository — plymouth-kcm6 may fail to install."
+    fi
+}
+
 detect_distro
 show_progress 2 $TOTAL_STEPS "$MSG_PHASE_1"
 
@@ -212,6 +242,8 @@ install_packages() {
     log_info "Instaluję wymagane pakiety KDE Plasma..." "Installing required KDE Plasma packages..."
     if [[ "$DISTRO_FAMILY" == "debian" ]]; then
         sudo apt-get update || true
+    elif [[ "$DISTRO_FAMILY" == "opensuse" ]]; then
+        add_opensuse_kde_frameworks_repo
     fi
 
     local installed=()
