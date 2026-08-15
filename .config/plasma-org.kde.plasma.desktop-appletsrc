@@ -247,7 +247,7 @@ immutability=1
 plugin=org.kde.plasma.icontasks
 
 [Containments][53][Applets][54][Configuration][General]
-launchers=preferred://filemanager,applications:google-chrome.desktop,applications:org.kde.okular.desktop,applications:org.kde.gwenview.desktop,applications:org.kde.spectacle.desktop
+launchers=preferred://filemanager,applications:google-chrome.desktop,applications:org.kde.kate.desktop,applications:org.kde.okular.desktop,applications:org.kde.gwenview.desktop,applications:org.kde.spectacle.desktop
 
 [Containments][53][General]
 AppletOrder=54
