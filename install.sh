@@ -5,7 +5,6 @@
 
 set -euo pipefail
 
-# ── Wykrywanie języka systemu ──────────────────────────────────
 detect_system_lang() {
     local sys_lang="${LANG:-}"
     [[ -z "$sys_lang" ]] && sys_lang="${LC_ALL:-${LC_MESSAGES:-}}"
@@ -17,31 +16,23 @@ detect_system_lang() {
 }
 SCRIPT_LANG="$(detect_system_lang)"
 
-# ── Kolory ────────────────────────────────────────────────────
 INFO='\033[0;34m'
 SUCCESS='\033[0;32m'
 ERROR='\033[0;31m'
 WARN='\033[0;33m'
 NC='\033[0m'
 
-# ── System logowania i ukrywanie komunikatów ──────────────────
 TMP_LOG="$(mktemp /tmp/kde-install-log.XXXXXX)"
 LOG_FILE="$HOME/install_error_$(date +%Y%m%d_%H%M%S).log"
 
-# fd 3 = terminal (używany WYŁĄCZNIE dla paska postępu i pytań)
-# fd 1/2 (stdout/stderr) lądują w tle w pliku tymczasowym.
 exec 3>&1
 exec >>"$TMP_LOG" 2>&1
 
-# Wyłączamy zawijanie linii w terminalu na czas działania skryptu.
-# Bez tego zbyt długa linia paska postępu (pasek + komunikat) zawija się
-# na dwa wiersze terminala, a \r\033[K czyści tylko ten, na którym stoi
-# kursor — w efekcie na ekranie zostają "resztki" poprzedniego komunikatu.
 printf '\033[?7l' >&3
 
 cleanup_on_exit() {
     local exit_code=$?
-    printf '\033[?7h' >&3   # z powrotem włączamy zawijanie linii
+    printf '\033[?7h' >&3
     if [ "$exit_code" -ne 0 ]; then
         echo -e "\n" >&3
         cp -f "$TMP_LOG" "$LOG_FILE" 2>/dev/null || true
@@ -55,38 +46,29 @@ cleanup_on_exit() {
 }
 trap cleanup_on_exit EXIT
 
-# Funkcje logujące wyłącznie w tle (do pliku)
 _pick_msg() { [[ "$SCRIPT_LANG" == "pl" ]] && echo "$1" || echo "$2"; }
-log_info()  { local m; m="$(_pick_msg "$1" "$2")"; echo -e "${INFO}==> $m${NC}"; }
 log_ok()    { local m; m="$(_pick_msg "$1" "$2")"; echo -e "${SUCCESS}✔ $m${NC}"; }
 log_err()   { local m; m="$(_pick_msg "$1" "$2")"; echo -e "${ERROR}✘ ERROR: $m${NC}"; }
-log_warn()  { local m; m="$(_pick_msg "$1" "$2")"; echo -e "${WARN}⚠ WARN: $m${NC}"; }
 
 trap 'log_err "Skrypt zakończył się błędem w linii $LINENO. Polecenie: $BASH_COMMAND" "Script failed at line $LINENO. Command: $BASH_COMMAND"' ERR
 
-# ── Funkcja rysująca pasek postępu ─────────────────────────────
 show_progress() {
     local step=$1
     local total=$2
     local msg=$3
     local percent=$(( step * 100 / total ))
 
-    # Szerokość terminala (fallback 80, gdyby tput się nie powiódł)
     local cols
     cols=$(tput cols 2>/dev/null)
     [[ "$cols" =~ ^[0-9]+$ ]] || cols=80
 
-    # Pasek ma maks. 50 znaków, ale kurczy się, jeśli terminal jest węższy.
     local bar_width=50
-    local reserved=12   # "[" + "]" + " 100% | " + margines bezpieczeństwa
+    local reserved=12
     if (( cols - reserved < bar_width )); then
         bar_width=$(( cols - reserved ))
         (( bar_width < 10 )) && bar_width=10
     fi
 
-    # Komunikat obcinamy tak, by cała linia zmieściła się w jednym wierszu
-    # terminala — dzięki temu \r\033[K zawsze czyści CAŁĄ poprzednią treść,
-    # zamiast zostawiać resztki po zawiniętej linii.
     local overhead=$(( bar_width + reserved ))
     local avail=$(( cols - overhead ))
     if (( avail < 5 )); then avail=5; fi
@@ -105,7 +87,6 @@ show_progress() {
     printf "\r\033[K[\033[1;32m%s\033[0;90m%s\033[0m] %3d%% | \033[1;36m%s\033[0m" "$bar_filled" "$bar_empty" "$percent" "$msg" >&3
 }
 
-# ── 3 GŁÓWNE KOMUNIKATY ────────────────────────────────────────
 if [[ "$SCRIPT_LANG" == "pl" ]]; then
     MSG_PHASE_1="[1/3] Wykrywanie dystrybucji i konfiguracja uprawnień..."
     MSG_PHASE_2="[2/3] Instalacja i weryfikacja pakietów KDE Plasma..."
@@ -118,12 +99,10 @@ fi
 
 TOTAL_STEPS=12
 
-# ── Zmienne ───────────────────────────────────────────────────
 CURRENT_USER=$(whoami)
 OLD_USER_PLACEHOLDER="bartek"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Upewnij się, że skrypt NIE jest uruchamiany jako root
 if [[ "$EUID" -eq 0 ]]; then
     echo -e "${ERROR}✘ Nie uruchamiaj skryptu jako root. Uruchom jako zwykły użytkownik z sudo.${NC}" >&3
     exit 1
@@ -205,8 +184,6 @@ install_one_package() {
     esac
 }
 
-# plymouth-kcm6 nie jest częścią standardowych repozytoriów openSUSE
-# (OSS/non-OSS) — trzeba dodać repozytorium KDE:Frameworks z OBS.
 add_opensuse_kde_frameworks_repo() {
     local repo_alias="KDE_Frameworks_plymouth"
     local suse_target
@@ -223,23 +200,17 @@ add_opensuse_kde_frameworks_repo() {
         return 0
     fi
 
-    log_info "Dodaję repozytorium KDE:Frameworks (wymagane dla plymouth-kcm6)..." "Adding KDE:Frameworks repository (required for plymouth-kcm6)..."
     if sudo zypper --non-interactive addrepo --refresh --priority 90 "$repo_url" "$repo_alias"; then
         sudo zypper --non-interactive --gpg-auto-import-keys refresh "$repo_alias" || true
-    else
-        log_warn "Nie udało się dodać repozytorium KDE:Frameworks — plymouth-kcm6 może nie zainstalować się poprawnie." \
-                 "Failed to add the KDE:Frameworks repository — plymouth-kcm6 may fail to install."
     fi
 }
 
 detect_distro
 show_progress 2 $TOTAL_STEPS "$MSG_PHASE_1"
 
-# Etap pakietów
 show_progress 3 $TOTAL_STEPS "$MSG_PHASE_2"
 
 install_packages() {
-    log_info "Instaluję wymagane pakiety KDE Plasma..." "Installing required KDE Plasma packages..."
     if [[ "$DISTRO_FAMILY" == "debian" ]]; then
         sudo apt-get update || true
     elif [[ "$DISTRO_FAMILY" == "opensuse" ]]; then
@@ -256,7 +227,6 @@ install_packages() {
             installed+=("$canonical")
         else
             failed+=("$canonical (pakiet: $real_name)")
-            log_warn "Błąd instalacji: $canonical -> $real_name" "Install failed: $canonical -> $real_name"
         fi
     done
 }
