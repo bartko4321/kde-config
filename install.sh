@@ -35,9 +35,9 @@ cleanup_on_exit() {
         echo -e "\n" >&3
         cp -f "$TMP_LOG" "$LOG_FILE" 2>/dev/null || true
         if [[ "$SCRIPT_LANG" == "pl" ]]; then
-            echo -e "${ERROR}✘ Wystąpił błąd (kod: $exit_code). Szczegółowy log zapisano w: $LOG_FILE${NC}" >&3
+            echo -e "${ERR}✘ Wystąpił błąd (kod: $exit_code). Szczegółowy log zapisano w: $LOG_FILE${NC}" >&3
         else
-            echo -e "${ERROR}✘ An error occurred (code: $exit_code). Detailed log saved to: $LOG_FILE${NC}" >&3
+            echo -e "${ERR}✘ An error occurred (code: $exit_code). Detailed log saved to: $LOG_FILE${NC}" >&3
         fi
     fi
     rm -f "$TMP_LOG"
@@ -104,7 +104,7 @@ OLD_USER_PLACEHOLDER="bartek"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [[ "$EUID" -eq 0 ]]; then
-    echo -e "${ERROR}✘ Nie uruchamiaj skryptu jako root. Uruchom jako zwykły użytkownik z sudo.${NC}" >&3
+    echo -e "${ERR}✘ Nie uruchamiaj skryptu jako root. Uruchom jako zwykły użytkownik z sudo.${NC}" >&3
     exit 1
 fi
 
@@ -113,7 +113,7 @@ fi
 # ==========================================================
 show_progress 0 $TOTAL_STEPS "$MSG_PHASE_1"
 
-printf '\033[?7h\n' >&3
+printf '\033[?7h' >&3
 sudo -v
 echo "$CURRENT_USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/99-temp-installer > /dev/null
 
@@ -152,7 +152,6 @@ resolve_package_name() {
 
 detect_distro() {
     if [[ ! -f /etc/os-release ]]; then
-        log_err "Nie można wykryć dystrybucji (brak /etc/os-release)." "Cannot detect the distribution."
         exit 1
     fi
     source /etc/os-release
@@ -174,7 +173,6 @@ detect_distro() {
             esac
             ;;
     esac
-    log_ok "Wykryto dystrybucję: ${PRETTY_NAME:-$id} (rodzina: $DISTRO_FAMILY)" "Detected distro: $DISTRO_FAMILY"
 }
 
 install_one_package() {
@@ -236,8 +234,6 @@ install_packages() {
     done
 
     show_progress 5 $TOTAL_STEPS "$MSG_PHASE_2"
-
-    log_ok "Zainstalowano ${#installed[@]}/${#PACKAGES[@]} pakietów." "Installed ${#installed[@]}/${#PACKAGES[@]} packages."
 }
 
 install_packages
