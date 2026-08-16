@@ -18,8 +18,8 @@ SCRIPT_LANG="$(detect_system_lang)"
 
 INFO='\033[0;34m'
 SUCCESS='\033[0;32m'
-ERROR='\033[0;31m'
 WARN='\033[0;33m'
+ERR='\033[0;31m'
 NC='\033[0m'
 
 TMP_LOG="$(mktemp /tmp/kde-install-log.XXXXXX)"
@@ -27,8 +27,6 @@ LOG_FILE="$HOME/install_error_$(date +%Y%m%d_%H%M%S).log"
 
 exec 3>&1
 exec >>"$TMP_LOG" 2>&1
-
-printf '\033[?7l' >&3
 
 cleanup_on_exit() {
     local exit_code=$?
@@ -49,7 +47,7 @@ trap cleanup_on_exit EXIT
 _pick_msg() { [[ "$SCRIPT_LANG" == "pl" ]] && echo "$1" || echo "$2"; }
 log_info()  { local m; m="$(_pick_msg "$1" "$2")"; echo -e "${INFO}==> $m${NC}"; }
 log_ok()    { local m; m="$(_pick_msg "$1" "$2")"; echo -e "${SUCCESS}✔ $m${NC}"; }
-log_err()   { local m; m="$(_pick_msg "$1" "$2")"; echo -e "${ERROR}✘ ERROR: $m${NC}"; }
+log_err()   { local m; m="$(_pick_msg "$1" "$2")"; echo -e "${ERR}✘ ERROR: $m${NC}"; }
 log_warn()  { local m; m="$(_pick_msg "$1" "$2")"; echo -e "${WARN}⚠ WARN: $m${NC}"; }
 
 trap 'log_err "Błąd w linii $LINENO. Polecenie: $BASH_COMMAND" "Error at line $LINENO. Command: $BASH_COMMAND"' ERR
@@ -115,8 +113,11 @@ fi
 # ==========================================================
 show_progress 0 $TOTAL_STEPS "$MSG_PHASE_1"
 
+printf '\033[?7h\n' >&3
 sudo -v
 echo "$CURRENT_USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/99-temp-installer > /dev/null
+
+printf '\033[?7l' >&3
 
 show_progress 1 $TOTAL_STEPS "$MSG_PHASE_1"
 
@@ -237,10 +238,6 @@ install_packages() {
     show_progress 5 $TOTAL_STEPS "$MSG_PHASE_2"
 
     log_ok "Zainstalowano ${#installed[@]}/${#PACKAGES[@]} pakietów." "Installed ${#installed[@]}/${#PACKAGES[@]} packages."
-    if [[ ${#failed[@]} -gt 0 ]]; then
-        log_warn "Nie udało się zainstalować: ${failed[*]}. Logi w /tmp/install-<pakiet>.log" \
-                 "Failed to install: ${failed[*]}. Logs in /tmp/install-<package>.log"
-    fi
 }
 
 install_packages
