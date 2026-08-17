@@ -278,16 +278,34 @@ if [[ -f "$SCRIPT_DIR/login-wallpaper.png" ]]; then
     sudo chmod 644 /usr/share/wallpapers/login-wallpaper.png || true
 fi
 
-if [[ -f "$SCRIPT_DIR/plasmalogin.conf" ]]; then
-    sudo cp -f "$SCRIPT_DIR/plasmalogin.conf" /etc/plasmalogin.conf || true
-    sudo chmod 644 /etc/plasmalogin.conf || true
+PLASMALOGIN_CONF="/etc/plasmalogin.conf"
+GREETER_WALLPAPER_URI="file:///usr/share/wallpapers/login-wallpaper.png"
+
+if [[ -f "$SCRIPT_DIR/login-wallpaper.png" ]]; then
+    sudo touch "$PLASMALOGIN_CONF"
+    if command -v kwriteconfig6 &>/dev/null; then
+        # kwriteconfig6 writes/merges the nested group without touching the rest of the file
+        sudo kwriteconfig6 --file "$PLASMALOGIN_CONF" \
+            --group Greeter --group Wallpaper --group org.kde.image --group General \
+            --key Image "$GREETER_WALLPAPER_URI" || true
+    else
+        # Fallback: manual merge if kwriteconfig6 is unavailable
+        SECTION_HEADER="[Greeter][Wallpaper][org.kde.image][General]"
+        if sudo grep -qF "$SECTION_HEADER" "$PLASMALOGIN_CONF" 2>/dev/null; then
+            if sudo awk -v hdr="$SECTION_HEADER" 'BEGIN{f=0} $0==hdr{f=1} f && /^Image=/{found=1} END{exit !found}' "$PLASMALOGIN_CONF"; then
+                sudo sed -i "\|^\[Greeter\]\[Wallpaper\]\[org\.kde\.image\]\[General\]\$|,/^\[/{s|^Image=.*|Image=$GREETER_WALLPAPER_URI|}" "$PLASMALOGIN_CONF" || true
+            else
+                sudo sed -i "\|^\[Greeter\]\[Wallpaper\]\[org\.kde\.image\]\[General\]\$|a Image=$GREETER_WALLPAPER_URI" "$PLASMALOGIN_CONF" || true
+            fi
+        else
+            printf '\n%s\nImage=%s\n' "$SECTION_HEADER" "$GREETER_WALLPAPER_URI" | sudo tee -a "$PLASMALOGIN_CONF" > /dev/null
+        fi
+    fi
+    sudo chmod 644 "$PLASMALOGIN_CONF" || true
 fi
 
 TARGET_DIR="$HOME/.local/share/wallpapers"
 mkdir -p "$TARGET_DIR"
-if [[ -f "$SCRIPT_DIR/wallpaper.jpg" ]]; then
-    cp -f "$SCRIPT_DIR/wallpaper.jpg" "$TARGET_DIR/wallpaper.jpg"
-fi
 
 show_progress 8 $TOTAL_STEPS "$MSG_PHASE_3"
 
