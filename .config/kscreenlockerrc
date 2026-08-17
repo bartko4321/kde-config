@@ -3,5 +3,5 @@ LockGrace=300
 Timeout=30
 
 [Greeter][Wallpaper][org.kde.image][General]
-Image=file:///home/bartek/.local/share/wallpapers/lock_screen.jpg
-PreviewImage=file:///home/bartek/.local/share/wallpapers/lock_screen.jpg
+Image=file:///~/.local/share/wallpapers/lock_screen.jpg
+PreviewImage=file:///~/.local/share/wallpapers/lock_screen.jpg
