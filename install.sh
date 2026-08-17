@@ -250,22 +250,22 @@ show_progress 6 $TOTAL_STEPS "$MSG_PHASE_2"
 show_progress 7 $TOTAL_STEPS "$MSG_PHASE_3"
 
 if [[ -f "$SCRIPT_DIR/piwo.png" ]]; then
-    sudo mkdir -p /usr/share/plasma/avatars/
-    sudo cp -f "$SCRIPT_DIR/piwo.png" /usr/share/plasma/avatars/piwo.png
-    sudo chmod 644 /usr/share/plasma/avatars/piwo.png
+    sudo mkdir -p /usr/share/plasma/avatars/ || true
+    sudo cp -f "$SCRIPT_DIR/piwo.png" /usr/share/plasma/avatars/piwo.png || true
+    sudo chmod 644 /usr/share/plasma/avatars/piwo.png || true
 
-    sudo mkdir -p /var/lib/AccountsService/icons/
-    sudo cp -f "$SCRIPT_DIR/piwo.png" /var/lib/AccountsService/icons/"$CURRENT_USER"
-    sudo chmod 644 /var/lib/AccountsService/icons/"$CURRENT_USER"
+    sudo mkdir -p /var/lib/AccountsService/icons/ || true
+    sudo cp -f "$SCRIPT_DIR/piwo.png" /var/lib/AccountsService/icons/"$CURRENT_USER" || true
+    sudo chmod 644 /var/lib/AccountsService/icons/"$CURRENT_USER" || true
 
     ACCOUNTS_FILE="/var/lib/AccountsService/users/$CURRENT_USER"
-    sudo mkdir -p /var/lib/AccountsService/users/
+    sudo mkdir -p /var/lib/AccountsService/users/ || true
 
     if [[ ! -f "$ACCOUNTS_FILE" ]]; then
         echo -e "[User]\nIcon=/var/lib/AccountsService/icons/$CURRENT_USER" | sudo tee "$ACCOUNTS_FILE" > /dev/null
     else
         if sudo grep -q "^Icon=" "$ACCOUNTS_FILE"; then
-            sudo sed -i "s|^Icon=.*|Icon=/var/lib/AccountsService/icons/$CURRENT_USER|" "$ACCOUNTS_FILE"
+            sudo sed -i "s|^Icon=.*|Icon=/var/lib/AccountsService/icons/$CURRENT_USER|" "$ACCOUNTS_FILE" || true
         else
             echo "Icon=/var/lib/AccountsService/icons/$CURRENT_USER" | sudo tee -a "$ACCOUNTS_FILE" > /dev/null
         fi
@@ -273,14 +273,14 @@ if [[ -f "$SCRIPT_DIR/piwo.png" ]]; then
 fi
 
 if [[ -f "$SCRIPT_DIR/login-wallpaper.png" ]]; then
-    sudo mkdir -p /usr/share/wallpapers
-    sudo cp -f "$SCRIPT_DIR/login-wallpaper.png" /usr/share/wallpapers/login-wallpaper.png
-    sudo chmod 644 /usr/share/wallpapers/login-wallpaper.png
+    sudo mkdir -p /usr/share/wallpapers || true
+    sudo cp -f "$SCRIPT_DIR/login-wallpaper.png" /usr/share/wallpapers/login-wallpaper.png || true
+    sudo chmod 644 /usr/share/wallpapers/login-wallpaper.png || true
 fi
 
 if [[ -f "$SCRIPT_DIR/plasmalogin.conf" ]]; then
-    sudo cp -f "$SCRIPT_DIR/plasmalogin.conf" /etc/plasmalogin.conf
-    sudo chmod 644 /etc/plasmalogin.conf
+    sudo cp -f "$SCRIPT_DIR/plasmalogin.conf" /etc/plasmalogin.conf || true
+    sudo chmod 644 /etc/plasmalogin.conf || true
 fi
 
 TARGET_DIR="$HOME/.local/share/wallpapers"
