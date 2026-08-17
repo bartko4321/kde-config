@@ -24,7 +24,7 @@ theme=Bryza
 name=WhiteSur-dark
 
 [ksplashrc][KSplash]
-Theme=beautifultreeanimationp6
+Theme=quarkssplashdarkerp6
 
 [Wallpaper]
 Image=$HOME/.local/share/wallpapers/wallpaper2.jpg
