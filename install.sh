@@ -320,7 +320,6 @@ show_progress 9 $TOTAL_STEPS "$MSG_PHASE_3"
 
 if [[ -d "$SCRIPT_DIR/.config" ]]; then cp -af "$SCRIPT_DIR/.config/." ~/.config/; fi
 if [[ -d "$SCRIPT_DIR/.local" ]]; then cp -af "$SCRIPT_DIR/.local/." ~/.local/; fi
-if [[ -d "$SCRIPT_DIR/.local/state" ]]; then cp -af "$SCRIPT_DIR/.local/state/." ~/.local/state/; fi
 if [[ -d "$SCRIPT_DIR/.icons" ]]; then cp -af "$SCRIPT_DIR/.icons/." ~/.icons/; fi
 
 LOCKSCREEN_CONF="$HOME/.config/kscreenlockerrc"
