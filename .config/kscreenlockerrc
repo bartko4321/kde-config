@@ -1,7 +1,0 @@
-[Daemon]
-LockGrace=300
-Timeout=30
-
-[Greeter][Wallpaper][org.kde.image][General]
-Image=file:///~/.local/share/wallpapers/lock_screen.jpg
-PreviewImage=file:///~/.local/share/wallpapers/lock_screen.jpg
