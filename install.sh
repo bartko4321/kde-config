@@ -320,7 +320,33 @@ show_progress 9 $TOTAL_STEPS "$MSG_PHASE_3"
 
 if [[ -d "$SCRIPT_DIR/.config" ]]; then cp -af "$SCRIPT_DIR/.config/." ~/.config/; fi
 if [[ -d "$SCRIPT_DIR/.local" ]]; then cp -af "$SCRIPT_DIR/.local/." ~/.local/; fi
+if [[ -d "$SCRIPT_DIR/.local/state" ]]; then cp -af "$SCRIPT_DIR/.local/state/." ~/.local/state/; fi
 if [[ -d "$SCRIPT_DIR/.icons" ]]; then cp -af "$SCRIPT_DIR/.icons/." ~/.icons/; fi
+
+LOCKSCREEN_CONF="$HOME/.config/kscreenlockerrc"
+LOCKSCREEN_WALLPAPER_PATH="$HOME/.local/share/wallpapers/lock_screen.jpg"
+LOCKSCREEN_WALLPAPER_URI="file://$LOCKSCREEN_WALLPAPER_PATH"
+
+if [[ -f "$LOCKSCREEN_WALLPAPER_PATH" ]]; then
+    touch "$LOCKSCREEN_CONF"
+    if command -v kwriteconfig6 &>/dev/null; then
+        kwriteconfig6 --file "$LOCKSCREEN_CONF" \
+            --group Greeter --group Wallpaper --group org.kde.image --group General \
+            --key Image "$LOCKSCREEN_WALLPAPER_URI" || true
+    else
+        SECTION_HEADER="[Greeter][Wallpaper][org.kde.image][General]"
+        if grep -qF "$SECTION_HEADER" "$LOCKSCREEN_CONF" 2>/dev/null; then
+            if awk -v hdr="$SECTION_HEADER" 'BEGIN{f=0} $0==hdr{f=1} f && /^Image=/{found=1} END{exit !found}' "$LOCKSCREEN_CONF"; then
+                sed -i "\|^\[Greeter\]\[Wallpaper\]\[org\.kde\.image\]\[General\]\$|,/^\[/{s|^Image=.*|Image=$LOCKSCREEN_WALLPAPER_URI|}" "$LOCKSCREEN_CONF" || true
+            else
+                sed -i "\|^\[Greeter\]\[Wallpaper\]\[org\.kde\.image\]\[General\]\$|a Image=$LOCKSCREEN_WALLPAPER_URI" "$LOCKSCREEN_CONF" || true
+            fi
+        else
+            printf '\n%s\nImage=%s\n' "$SECTION_HEADER" "$LOCKSCREEN_WALLPAPER_URI" >> "$LOCKSCREEN_CONF"
+        fi
+    fi
+    chmod 644 "$LOCKSCREEN_CONF" || true
+fi
 
 if [[ "$OLD_USER_PLACEHOLDER" != "$CURRENT_USER" ]]; then
     for dir in ~/.config ~/.local ~/.icons; do
