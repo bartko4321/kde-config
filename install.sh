@@ -249,28 +249,39 @@ show_progress 6 $TOTAL_STEPS "$MSG_PHASE_2"
 # ==========================================================
 show_progress 7 $TOTAL_STEPS "$MSG_PHASE_3"
 
-AVATAR_PATH="$HOME/.local/share/plasma/avatars/piwo.png"
+if [[ -f "$SCRIPT_DIR/piwo.png" ]]; then
+    sudo mkdir -p /usr/share/plasma/avatars/ || true
+    sudo cp -f "$SCRIPT_DIR/piwo.png" /usr/share/plasma/avatars/piwo.png || true
+    sudo chmod 644 /usr/share/plasma/avatars/piwo.png || true
 
-if [[ -f "$AVATAR_PATH" ]]; then
+    sudo mkdir -p /var/lib/AccountsService/icons/ || true
+    sudo cp -f "$SCRIPT_DIR/piwo.png" /var/lib/AccountsService/icons/"$CURRENT_USER" || true
+    sudo chmod 644 /var/lib/AccountsService/icons/"$CURRENT_USER" || true
+
     ACCOUNTS_FILE="/var/lib/AccountsService/users/$CURRENT_USER"
     sudo mkdir -p /var/lib/AccountsService/users/ || true
 
     if [[ ! -f "$ACCOUNTS_FILE" ]]; then
-        echo -e "[User]\nIcon=$AVATAR_PATH" | sudo tee "$ACCOUNTS_FILE" > /dev/null
+        echo -e "[User]\nIcon=/var/lib/AccountsService/icons/$CURRENT_USER" | sudo tee "$ACCOUNTS_FILE" > /dev/null
     else
         if sudo grep -q "^Icon=" "$ACCOUNTS_FILE"; then
-            sudo sed -i "s|^Icon=.*|Icon=$AVATAR_PATH|" "$ACCOUNTS_FILE" || true
+            sudo sed -i "s|^Icon=.*|Icon=/var/lib/AccountsService/icons/$CURRENT_USER|" "$ACCOUNTS_FILE" || true
         else
-            echo "Icon=$AVATAR_PATH" | sudo tee -a "$ACCOUNTS_FILE" > /dev/null
+            echo "Icon=/var/lib/AccountsService/icons/$CURRENT_USER" | sudo tee -a "$ACCOUNTS_FILE" > /dev/null
         fi
     fi
 fi
 
-PLASMALOGIN_CONF="/etc/plasmalogin.conf"
-LOGIN_WALLPAPER_PATH="$HOME/.local/share/wallpapers/login-wallpaper.png"
-GREETER_WALLPAPER_URI="file://$LOGIN_WALLPAPER_PATH"
+if [[ -f "$SCRIPT_DIR/login-wallpaper.png" ]]; then
+    sudo mkdir -p /usr/share/wallpapers || true
+    sudo cp -f "$SCRIPT_DIR/login-wallpaper.png" /usr/share/wallpapers/login-wallpaper.png || true
+    sudo chmod 644 /usr/share/wallpapers/login-wallpaper.png || true
+fi
 
-if [[ -f "$LOGIN_WALLPAPER_PATH" ]]; then
+PLASMALOGIN_CONF="/etc/plasmalogin.conf"
+GREETER_WALLPAPER_URI="file:///usr/share/wallpapers/login-wallpaper.png"
+
+if [[ -f "$SCRIPT_DIR/login-wallpaper.png" ]]; then
     sudo touch "$PLASMALOGIN_CONF"
     if command -v kwriteconfig6 &>/dev/null; then
         # kwriteconfig6 writes/merges the nested group without touching the rest of the file
@@ -310,31 +321,6 @@ show_progress 9 $TOTAL_STEPS "$MSG_PHASE_3"
 if [[ -d "$SCRIPT_DIR/.config" ]]; then cp -af "$SCRIPT_DIR/.config/." ~/.config/; fi
 if [[ -d "$SCRIPT_DIR/.local" ]]; then cp -af "$SCRIPT_DIR/.local/." ~/.local/; fi
 if [[ -d "$SCRIPT_DIR/.icons" ]]; then cp -af "$SCRIPT_DIR/.icons/." ~/.icons/; fi
-
-LOCKSCREEN_CONF="$HOME/.config/kscreenlockerrc"
-LOCKSCREEN_WALLPAPER_PATH="$HOME/.local/share/wallpapers/lock_screen.jpg"
-LOCKSCREEN_WALLPAPER_URI="file://$LOCKSCREEN_WALLPAPER_PATH"
-
-if [[ -f "$LOCKSCREEN_WALLPAPER_PATH" ]]; then
-    touch "$LOCKSCREEN_CONF"
-    if command -v kwriteconfig6 &>/dev/null; then
-        kwriteconfig6 --file "$LOCKSCREEN_CONF" \
-            --group Greeter --group Wallpaper --group org.kde.image --group General \
-            --key Image "$LOCKSCREEN_WALLPAPER_URI" || true
-    else
-        SECTION_HEADER="[Greeter][Wallpaper][org.kde.image][General]"
-        if grep -qF "$SECTION_HEADER" "$LOCKSCREEN_CONF" 2>/dev/null; then
-            if awk -v hdr="$SECTION_HEADER" 'BEGIN{f=0} $0==hdr{f=1} f && /^Image=/{found=1} END{exit !found}' "$LOCKSCREEN_CONF"; then
-                sed -i "\|^\[Greeter\]\[Wallpaper\]\[org\.kde\.image\]\[General\]\$|,/^\[/{s|^Image=.*|Image=$LOCKSCREEN_WALLPAPER_URI|}" "$LOCKSCREEN_CONF" || true
-            else
-                sed -i "\|^\[Greeter\]\[Wallpaper\]\[org\.kde\.image\]\[General\]\$|a Image=$LOCKSCREEN_WALLPAPER_URI" "$LOCKSCREEN_CONF" || true
-            fi
-        else
-            printf '\n%s\nImage=%s\n' "$SECTION_HEADER" "$LOCKSCREEN_WALLPAPER_URI" >> "$LOCKSCREEN_CONF"
-        fi
-    fi
-    chmod 644 "$LOCKSCREEN_CONF" || true
-fi
 
 if [[ "$OLD_USER_PLACEHOLDER" != "$CURRENT_USER" ]]; then
     for dir in ~/.config ~/.local ~/.icons; do
