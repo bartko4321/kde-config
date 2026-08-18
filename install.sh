@@ -272,16 +272,11 @@ if [[ -f "$SCRIPT_DIR/piwo.png" ]]; then
     fi
 fi
 
-if [[ -f "$SCRIPT_DIR/login-wallpaper.png" ]]; then
-    sudo mkdir -p /usr/share/wallpapers || true
-    sudo cp -f "$SCRIPT_DIR/login-wallpaper.png" /usr/share/wallpapers/login-wallpaper.png || true
-    sudo chmod 644 /usr/share/wallpapers/login-wallpaper.png || true
-fi
-
 PLASMALOGIN_CONF="/etc/plasmalogin.conf"
-GREETER_WALLPAPER_URI="file:///usr/share/wallpapers/login-wallpaper.png"
+LOGIN_WALLPAPER_PATH="$HOME/.local/share/wallpapers/login-wallpaper.png"
+GREETER_WALLPAPER_URI="file://$LOGIN_WALLPAPER_PATH"
 
-if [[ -f "$SCRIPT_DIR/login-wallpaper.png" ]]; then
+if [[ -f "$LOGIN_WALLPAPER_PATH" ]]; then
     sudo touch "$PLASMALOGIN_CONF"
     if command -v kwriteconfig6 &>/dev/null; then
         # kwriteconfig6 writes/merges the nested group without touching the rest of the file
