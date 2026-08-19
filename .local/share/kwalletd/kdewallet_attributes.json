@@ -1,9 +1,0 @@
-{
-    "xdg-desktop-portal/com.google.Chrome": {
-        "$fdo_created": "1775145680",
-        "$fdo_modified": "1775145680",
-        "attributes": {
-            "server": "xdg-desktop-portal",
-            "type": "binary",
-            "user": "com.google.Chrome"
-}
