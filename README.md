@@ -22,7 +22,7 @@ A script that automates the personalization and visual configuration of the **KD
 
 ### 1. Clone the repository or download the files
 ```bash
-git clone https://github.com/bartko4321/kde-config.git
+git clone https://github.com/syscore88/kde-config.git
 ```
 
 ### 2. Enter the downloaded folder
