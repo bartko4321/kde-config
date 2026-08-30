@@ -1,5 +1,6 @@
 [Added Associations]
 application/rss+xml=userapp-Thunderbird-DCLJS3.desktop;userapp-Thunderbird-G5L7T3.desktop;
+application/x-bat=org.kde.kate.desktop;wine.desktop;io.github.Faugus.faugus-launcher.shortcut.desktop;io.github.Faugus.faugus-launcher.desktop;org.kde.kwrite.desktop;libreoffice-writer.desktop;okularApplication_txt.desktop;vim.desktop;
 application/x-extension-ics=userapp-Thunderbird-GDYNS3.desktop;userapp-Thunderbird-HFZ6T3.desktop;
 application/x-extension-rss=userapp-Thunderbird-DCLJS3.desktop;userapp-Thunderbird-G5L7T3.desktop;
 application/x-matroska=vlc.desktop;
@@ -70,6 +71,7 @@ x-scheme-handler/webcals=userapp-Thunderbird-HFZ6T3.desktop;userapp-Thunderbird-
 
 [Default Applications]
 application/rss+xml=userapp-Thunderbird-G5L7T3.desktop
+application/x-bat=org.kde.kate.desktop;
 application/x-extension-ics=userapp-Thunderbird-HFZ6T3.desktop
 application/x-extension-rss=userapp-Thunderbird-G5L7T3.desktop
 application/x-matroska=vlc.desktop;
