@@ -4,6 +4,7 @@
 # ==========================================================
 
 set -Eeuo pipefail
+export PATH="/usr/sbin:/sbin:$PATH"
 
 detect_system_lang() {
     local sys_lang="${LANG:-}"
@@ -111,6 +112,12 @@ fi
 
 sudo -v
 
+RUN0_NOPASSWD_FILE="/etc/polkit-1/rules.d/51-run0-nopasswd.rules"
+USE_RUN0=0
+if ! command -v visudo >/dev/null 2>&1 || sudo --version 2>/dev/null | grep -qi "run0"; then
+    USE_RUN0=1
+fi
+
 ( while true; do sudo -n true; sleep 60; kill -0 "$$" 2>/dev/null || exit; done ) &
 SUDO_KEEPALIVE_PID=$!
 
@@ -120,7 +127,12 @@ SUDO_KEEPALIVE_PID=$!
 show_progress 0 $TOTAL_STEPS "$MSG_PHASE_1"
 
 printf '\033[?7h' >&3
-echo "$CURRENT_USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/99-temp-installer > /dev/null
+if [[ "$USE_RUN0" -eq 1 ]]; then
+    printf 'polkit._run0_nopasswd.push("%s");\n' "$CURRENT_USER" | sudo tee "$RUN0_NOPASSWD_FILE" > /dev/null
+    sudo systemctl try-restart polkit 2>/dev/null || true
+else
+    echo "$CURRENT_USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/99-temp-installer > /dev/null
+fi
 
 printf '\033[?7l' >&3
 
@@ -384,7 +396,12 @@ fi
 # ==========================================================
 # 5. ZAKOŃCZENIE I SPRZĄTANIE
 # ==========================================================
-sudo rm -f /etc/sudoers.d/99-temp-installer
+if [[ "$USE_RUN0" -eq 1 ]]; then
+    sudo rm -f "$RUN0_NOPASSWD_FILE"
+    sudo systemctl try-restart polkit 2>/dev/null || true
+else
+    sudo rm -f /etc/sudoers.d/99-temp-installer
+fi
 
 show_progress 12 $TOTAL_STEPS "$MSG_PHASE_3"
 echo -e "\n" >&3
