@@ -13,7 +13,6 @@ A script that automates the personalization and visual configuration of the **KD
 ### 2. User Configuration
 * **Safe copying:** Stops the `plasmashell` process to prevent the running desktop environment from overwriting files.
 * **Config transfer:** Copies the hidden directories `.config`, `.local`, and `.icons` to the home directory (`~`).
-* **Dynamic path replacement:** Automatically scans config files for the old username (`bartek`) and replaces it with your current system account name.
 * **Cache cleanup & rebuild:** Clears the icon/Plasma cache and forces a rebuild of the `sycoca` database.
 
 ---
