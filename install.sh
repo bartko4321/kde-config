@@ -131,7 +131,20 @@ if [[ "$USE_RUN0" -eq 1 ]]; then
     printf 'polkit._run0_nopasswd.push("%s");\n' "$CURRENT_USER" | sudo tee "$RUN0_NOPASSWD_FILE" > /dev/null
     sudo systemctl try-restart polkit 2>/dev/null || true
 else
-    echo "$CURRENT_USER ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/99-temp-installer > /dev/null
+    SUDOERS_TMP="$(mktemp)"
+    echo "$CURRENT_USER ALL=(ALL) NOPASSWD: ALL" > "$SUDOERS_TMP"
+    if sudo visudo -cf "$SUDOERS_TMP" >/dev/null; then
+        sudo install -m 0440 -o root -g root "$SUDOERS_TMP" /etc/sudoers.d/99-temp-installer
+    else
+        rm -f "$SUDOERS_TMP"
+        if [[ "$SCRIPT_LANG" == "pl" ]]; then
+            echo -e "${ERR}✘ Nieprawidłowa składnia reguły sudoers - przerywam.${NC}" >&3
+        else
+            echo -e "${ERR}✘ Invalid sudoers rule syntax - aborting.${NC}" >&3
+        fi
+        exit 1
+    fi
+    rm -f "$SUDOERS_TMP"
 fi
 
 printf '\033[?7l' >&3
@@ -296,12 +309,10 @@ GREETER_WALLPAPER_URI="file:///usr/share/wallpapers/login-wallpaper.png"
 if [[ -f "$SCRIPT_DIR/login-wallpaper.png" ]]; then
     sudo touch "$PLASMALOGIN_CONF"
     if command -v kwriteconfig6 &>/dev/null; then
-        # kwriteconfig6 writes/merges the nested group without touching the rest of the file
         sudo kwriteconfig6 --file "$PLASMALOGIN_CONF" \
             --group Greeter --group Wallpaper --group org.kde.image --group General \
             --key Image "$GREETER_WALLPAPER_URI" || true
     else
-        # Fallback: manual merge if kwriteconfig6 is unavailable
         SECTION_HEADER="[Greeter][Wallpaper][org.kde.image][General]"
         if sudo grep -qF "$SECTION_HEADER" "$PLASMALOGIN_CONF" 2>/dev/null; then
             if sudo awk -v hdr="$SECTION_HEADER" 'BEGIN{f=0} $0==hdr{f=1} f && /^Image=/{found=1} END{exit !found}' "$PLASMALOGIN_CONF"; then
