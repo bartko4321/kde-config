@@ -3,7 +3,7 @@
 # SKRYPT KONFIGURACYJNY WIZUALNYCH ASPEKTÓW KDE PLASMA
 # ==========================================================
 
-set -Eeuo pipefail
+set -Eeuo pipefail 
 export PATH="/usr/sbin:/sbin:$PATH"
 
 detect_system_lang() {
