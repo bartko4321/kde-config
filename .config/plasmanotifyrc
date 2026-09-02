@@ -1,3 +1,14 @@
+[Applications][com.shellyorg.shelly]
+ShowBadges=false
+ShowInHistory=false
+ShowPopups=false
+
+[Applications][firefox]
+Seen=true
+ShowBadges=false
+ShowInHistory=false
+ShowPopups=false
+
 [Applications][google-chrome]
 Seen=true
 ShowBadges=false
@@ -19,8 +30,16 @@ ShowBadges=false
 ShowInHistory=false
 ShowPopups=false
 
+[Applications][org.mozilla.Thunderbird]
+Seen=true
+
 [Applications][org.qbittorrent.qBittorrent]
 Seen=true
+ShowBadges=false
+ShowInHistory=false
+ShowPopups=false
+
+[Applications][timeshift-gtk]
 ShowBadges=false
 ShowInHistory=false
 ShowPopups=false
