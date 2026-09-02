@@ -179,7 +179,7 @@
    <Merge type="files"/>
    <Filename>brave-origin.desktop</Filename>
    <Filename>discord.desktop</Filename>
-   <Filename>firefox-developer-edition.desktop</Filename>
+   <Filename>firefox.desktop</Filename>
    <Filename>google-chrome.desktop</Filename>
    <Merge type="menus"/>
    <Menuname>Terminal</Menuname>
