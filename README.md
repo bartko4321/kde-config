@@ -18,7 +18,7 @@ The script auto-detects the system language (Polish/English) from the `LANG`/`LC
   - Automatically rewrites any leftover hardcoded paths from the original author's home directory (`/home/bartek`) to the current user's home directory.
 - **Wallpaper Management**:
   - Desktop wallpaper applied from `wallpaper.jpg` via an autostart entry that retries `plasma-apply-wallpaperimage` until it succeeds.
-  - Login screen (SDDM/`plasmalogin`) wallpaper applied from `login-wallpaper.png`, written to `/etc/plasmalogin.conf` via `kwriteconfig6` (with a `sed`-based fallback if it's unavailable).
+  - Login screen wallpaper applied from `login-wallpaper.png`, written to `/etc/plasmalogin.conf` via `kwriteconfig6` (with a `sed`-based fallback if it's unavailable).
   - Lock screen wallpaper applied from `lock_screen.jpg` via `kscreenlockerrc`.
 - **User Avatar Setup**: Automatically sets the user profile picture in `AccountsService` and the Plasma avatars directory using `piwo.png`.
 - **Progress Bar & Logging**: Displays a live progress bar across 3 phases / 12 steps. On failure, a detailed log is saved to `~/install_error_<timestamp>.log`.
