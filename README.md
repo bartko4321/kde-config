@@ -97,6 +97,8 @@ If you find this tool helpful and it saved you some time, consider buying me a c
 
 If you find this project useful, leave a star! ⭐
 
+---
+
 ## ⚠️ Important Notes
 
 * **Auto-Reboot:** After all configurations complete successfully, the script will **automatically restart the computer** after 3 seconds so that all changes to the display manager and desktop environment are properly loaded. Save your work before running!
