@@ -32,18 +32,13 @@ The script identifies the OS using `/etc/os-release` (falling back to `ID_LIKE`)
 
 | Distribution | Package Manager | Notes |
 | :--- | :--- | :--- |
-| **Debian / Ubuntu / Pop!_OS / Mint / neon / Zorin** | `apt` | `apt-get update` runs before installation |
+| **Debian / Ubuntu / Pop!_OS / Mint / neon / Zorin** | `apt` | `aspell-pl` → `hunspell-pl`, `kio-admin` → `kio_admin`, `plymouth-kcm` → `plymouth-kcm6` |
 | **Fedora** | `dnf` | `aspell-pl` → `hunspell-pl` |
-| **Arch Linux / Manjaro / EndeavourOS** | `pacman` | Installed with `--needed --noconfirm` |
-| **openSUSE / SLES** | `zypper` | Adds the KDE:Frameworks repository (Tumbleweed or Leap, auto-detected) for Plymouth theming; `aspell-pl` → `hunspell-pl`, `kio-admin` → `kio_admin`, `plymouth-kcm` → `plymouth-kcm6` |
+| **Arch Linux / Manjaro / EndeavourOS** | `pacman` | `aspell-pl` → `hunspell-pl`, `kio-admin` → `kio_admin`, `plymouth-kcm` → `plymouth-kcm6` |
+| **openSUSE / SLES** | `zypper` | `aspell-pl` → `hunspell-pl`, `kio-admin` → `kio_admin`, `plymouth-kcm` → `plymouth-kcm6` |
 
 ---
 
-## 📦 Installed Packages
-
-`plasma-firewall`, `plasma-nm`, `plasma-pa`, `kscreen`, `bluedevil`, `kde-gtk-config`, `kinfocenter`, `kio-admin`, `kdeplasma-addons`, `aspell-pl`, `kaccounts-providers`, `dolphin`, `konsole`, `dolphin-plugins`, `spectacle`, `gwenview`, `okular`, `ark`, `kate`, `plymouth-kcm`.
-
----
 
 ## 🔍 Module Details
 
