@@ -33,7 +33,7 @@ The script identifies the OS using `/etc/os-release` (falling back to `ID_LIKE`)
 | Distribution | Package Manager | Notes |
 | :--- | :--- | :--- |
 | **Debian / Ubuntu / Pop!_OS / Mint / neon / Zorin** | `apt` | `aspell-pl` → `hunspell-pl`, `kio-admin` → `kio_admin`, `plymouth-kcm` → `plymouth-kcm6` |
-| **Fedora** | `dnf` | `aspell-pl` → `hunspell-pl` |
+| **Fedora** | `dnf` | `aspell-pl` → `hunspell-pl`, `kio-admin` → `kio_admin`, `plymouth-kcm` → `plymouth-kcm6` |
 | **Arch Linux / Manjaro / EndeavourOS** | `pacman` | `aspell-pl` → `hunspell-pl`, `kio-admin` → `kio_admin`, `plymouth-kcm` → `plymouth-kcm6` |
 | **openSUSE / SLES** | `zypper` | `aspell-pl` → `hunspell-pl`, `kio-admin` → `kio_admin`, `plymouth-kcm` → `plymouth-kcm6` |
 
