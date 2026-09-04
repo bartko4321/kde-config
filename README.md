@@ -83,12 +83,15 @@ chmod +x install.sh
 
 4. Run the script
 > ⚠️ **IMPORTANT:** Run the script as a **regular user** (NOT as root/sudo). The script will ask for the administrator password at the start to configure temporary elevated privileges.
-
 ```bash
 ./install.sh
 ```
 ---
 <img width="1920" height="1080" alt="Zrzut ekranu_20260716_191008" src="https://github.com/user-attachments/assets/15eafeed-a1aa-4351-bbc1-46c0c231a1a6" />
+
+### ☕ Support the Project
+
+If you find this tool helpful and it saved you some time, consider buying me a coffee to support further development! 
 
 [![Buy Me A Coffee](https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png)](https://buymeacoffee.com/bartekszczecinski)
 
