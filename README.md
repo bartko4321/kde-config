@@ -1,19 +1,71 @@
-# 🚀 KDE Environment Auto-Setup Script
+# 🖥️ KDE Plasma Visual Configuration Script
 
-A script that automates the personalization and visual configuration of the **KDE Plasma** desktop environment. It allows you to easily transfer themes, wallpapers, lock screens, and panel configurations between different user accounts or systems.
+An automated Bash shell script designed for complete visual and environment configuration of **KDE Plasma** desktop across popular Linux distributions. The script automatically detects the system package manager, installs the core KDE Plasma utility packages, temporarily grants passwordless sudo for a smooth unattended run, copies user configurations, sets wallpapers (desktop, login screen and lock screen), sets the user avatar, and finishes with a full system reboot.
 
-## 🚀 What does this script do?
+The script auto-detects the system language (Polish/English) from the `LANG`/`LC_ALL` locale and prints all status messages accordingly.
 
-### 1. System Configuration (Sudo)
-* **Splash Screen:** Replaces the default KDE Breeze splash screen with a custom one from the `splash` directory.
-* **User avatar:** Sets `piwo.png` as the user avatar in the system, Plasma environment, and SDDM display manager (`AccountsService`).
-* **Login screen & wallpapers:** Copies a dedicated login wallpaper (`start.png`) and the `plasmalogin.conf` configuration file.
-* **Default system wallpapers:** Overwrites the system wallpapers from the "Next" theme in 1080p, 2K, and 4K resolutions (light and dark variants).
+---
 
-### 2. User Configuration
-* **Safe copying:** Stops the `plasmashell` process to prevent the running desktop environment from overwriting files.
-* **Config transfer:** Copies the hidden directories `.config`, `.local`, and `.icons` to the home directory (`~`).
-* **Cache cleanup & rebuild:** Clears the icon/Plasma cache and forces a rebuild of the `sycoca` database.
+## 🚀 Script Features
+
+- **Automatic Linux Distribution Detection**: Full support for Debian, Ubuntu, Pop!_OS, Linux Mint, KDE neon, Zorin, Fedora, Arch Linux, Manjaro, EndeavourOS, and openSUSE/SLES.
+- **Temporary Passwordless Sudo**: Requests the admin password once at the start, then configures a temporary `NOPASSWD` rule (via `/etc/sudoers.d/` or a `polkit`/`run0` rule on systems without `visudo`) so the rest of the script can run unattended. The rule is automatically removed at the end of the script.
+- **KDE Plasma Package Installation**: Installs the core Plasma package set, resolving distribution-specific package names automatically (e.g. `aspell-pl` → `hunspell-pl` on Fedora/openSUSE, `plymouth-kcm` → `kde-config-plymouth` on Debian).
+- **Configuration Files Sync**:
+  - Copies `.config/` folder contents to `~/.config/`
+  - Copies `.local/` folder contents to `~/.local/`
+  - Copies `.icons/` folder contents to `~/.icons/`
+  - Automatically rewrites any leftover hardcoded paths from the original author's home directory (`/home/bartek`) to the current user's home directory.
+- **Wallpaper Management**:
+  - Desktop wallpaper applied from `wallpaper.jpg` via an autostart entry that retries `plasma-apply-wallpaperimage` until it succeeds.
+  - Login screen (SDDM/`plasmalogin`) wallpaper applied from `login-wallpaper.png`, written to `/etc/plasmalogin.conf` via `kwriteconfig6` (with a `sed`-based fallback if it's unavailable).
+  - Lock screen wallpaper applied from `lock_screen.jpg` via `kscreenlockerrc`.
+- **User Avatar Setup**: Automatically sets the user profile picture in `AccountsService` and the Plasma avatars directory using `piwo.png`.
+- **Progress Bar & Logging**: Displays a live progress bar across 3 phases / 12 steps. On failure, a detailed log is saved to `~/install_error_<timestamp>.log`.
+- **Cache Cleanup & Reload**: Clears icon/Plasma caches and rebuilds the KDE system configuration cache (`kbuildsycoca6`) before rebooting.
+
+---
+
+## 🐧 Supported Distributions
+
+The script identifies the OS using `/etc/os-release` (falling back to `ID_LIKE`) and selects the corresponding package manager:
+
+| Distribution | Package Manager | Notes |
+| :--- | :--- | :--- |
+| **Debian / Ubuntu / Pop!_OS / Mint / neon / Zorin** | `apt` | `apt-get update` runs before installation |
+| **Fedora** | `dnf` | `aspell-pl` → `hunspell-pl` |
+| **Arch Linux / Manjaro / EndeavourOS** | `pacman` | Installed with `--needed --noconfirm` |
+| **openSUSE / SLES** | `zypper` | Adds the KDE:Frameworks repository (Tumbleweed or Leap, auto-detected) for Plymouth theming; `aspell-pl` → `hunspell-pl`, `kio-admin` → `kio_admin`, `plymouth-kcm` → `plymouth-kcm6` |
+
+---
+
+## 📦 Installed Packages
+
+`plasma-firewall`, `plasma-nm`, `plasma-pa`, `kscreen`, `bluedevil`, `kde-gtk-config`, `kinfocenter`, `kio-admin`, `kdeplasma-addons`, `aspell-pl`, `kaccounts-providers`, `dolphin`, `konsole`, `dolphin-plugins`, `spectacle`, `gwenview`, `okular`, `ark`, `kate`, `plymouth-kcm`.
+
+---
+
+## 🔍 Module Details
+
+### 1. Permissions & Distribution Detection
+Verifies the script is **not** run as root, requests the sudo password once, and grants a temporary `NOPASSWD` rule (kept alive with a background refresher) for the duration of the run. The OS is detected via `/etc/os-release`.
+
+### 2. Package Installation
+Iterates over the package list, resolving distro-specific names, and installs each one, logging failures per package to `/tmp/install-<package>.log`.
+
+### 3. User Avatar (AccountsService)
+`piwo.png` is copied to `/usr/share/plasma/avatars/` and `/var/lib/AccountsService/icons/$USER`, and `/var/lib/AccountsService/users/$USER` is updated with the matching `Icon=` entry.
+
+### 4. Login & Lock Screen Wallpapers
+- `login-wallpaper.png` is copied to `/usr/share/wallpapers/` and referenced from `/etc/plasmalogin.conf`.
+- The desktop `wallpaper.jpg` is applied via a self-removing autostart entry (`force-wallpaper.desktop`) that retries on next login until successful.
+- `lock_screen.jpg` is referenced from `~/.config/kscreenlockerrc`.
+
+### 5. Configuration Copy & Cleanup
+Plasma Shell is stopped, the `.config`, `.local`, and `.icons` folders from the script directory are copied into the user's home directory, hardcoded old-username paths are rewritten, caches are cleared, and `kbuildsycoca6` rebuilds the system configuration database.
+
+### 6. Finalization
+The temporary sudo/polkit rule is removed and the system automatically **reboots** (`systemctl reboot`) to apply all changes.
 
 ---
 
